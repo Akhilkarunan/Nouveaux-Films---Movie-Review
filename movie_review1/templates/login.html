@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Nouveaux Films</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #0d0c0c; /* Dark Netflix background */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: #141414; /* Slightly lighter dark shade */
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .login-card h1 {
+            font-weight: 700;
+            color: #fff; /* White for Netflix theme */
+            margin-bottom: 15px;
+        }
+
+        .login-card h2 {
+            font-weight: 600;
+            color: #E50914; /* Netflix red */
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #333; /* Dark border */
+            background: #333; /* Dark input background */
+            color: #fff; /* White text */
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.5); /* Red glow */
+            border-color: #E50914; /* Netflix red */
+            transform: scale(1.02);
+            background: #333;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #fff; /* White labels */
+            margin-bottom: 8px;
+            display: block;
+            text-align: left;
+        }
+
+        .btn-custom {
+            background: #E50914; /* Netflix red */
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-custom:hover {
+            background: #b20710; /* Darker red on hover */
+            transform: translateY(-2px);
+            animation: bounce 0.4s ease;
+        }
+
+        .btn-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-custom:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        .login-link {
+            color: #E50914; /* Netflix red */
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #b20710; /* Darker red on hover */
+            text-decoration: underline;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #E50914; /* Netflix red */
+            font-size: 14px;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(-2px); }
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <h1 class="text-center mt-3">Nouveaux Films</h1>
+        <h2 class="text-center">Login</h2>
+        
+        <form method="post" id="loginForm">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {% if 'password' in field.name %}
+                        <div class="password-wrapper">
+                            {{ field }}
+                            <span class="toggle-password" onclick="togglePassword(this)">👁</span>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-custom w-100">
+                <span class="button-text">Login</span>
+                <span class="loading-spinner"></span>
+            </button>
+            <div class="mt-3">
+                <a href="{% url 'register' %}" class="login-link">Don't have an account? Register</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Password toggle functionality
+        function togglePassword(element) {
+            const wrapper = element.parentElement;
+            const passwordField = wrapper.querySelector('input');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                element.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                element.textContent = '👁️';
+            }
+        }
+
+        // Form submission handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputs = this.querySelectorAll('.form-control');
+            let isValid = true;
+
+            // Basic validation
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#dc3545';
+                } else {
+                    input.style.borderColor = '#333';
+                }
+            });
+
+            if (isValid) {
+                // Show loading state
+                const button = this.querySelector('.btn-custom');
+                const buttonText = button.querySelector('.button-text');
+                const spinner = button.querySelector('.loading-spinner');
+                
+                button.disabled = true;
+                buttonText.style.opacity = '0';
+                spinner.style.display = 'block';
+
+                // Simulate form submission (remove setTimeout in production)
+                setTimeout(() => {
+                    this.submit();
+                }, 1500);
+            } else {
+                alert('Please fill in all fields');
+            }
+        });
+
+        // Add form-control class to inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.classList.add('form-control');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.Movie_name }} | Nouveaux Films</title>
+    {% load static %}
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0d0c0c;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        .slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .movie-poster {
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            max-width: 180px;
+            height: auto;
+        }
+
+        .movie-poster:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-animated {
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-animated:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-success {
+            background-color: #E50914;
+            border-color: #E50914;
+        }
+
+        .btn-success:hover {
+            background-color: #b20710;
+            border-color: #b20710;
+        }
+
+        .btn-primary {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+            border-color: #555;
+        }
+        .review-actions {
+          position: absolute;
+           top: 15px;
+           right: 15px;
+          display: flex;
+          gap: 10px;
+        }
+
+        .review-section {
+            background-color: #141414;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-card {
+            transition: all 0.3s ease;
+            background-color: #1c1c1c;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            position: relative; /* For absolute positioning of action icons */
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            color: #ccc;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #E50914;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            color: #fff;
+            margin-right: 40px; /* Space for action icons */
+        }
+
+        .text-muted {
+            color: #888 !important;
+        }
+
+        strong {
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        /* Action icons styling */
+        .review-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-icon {
+            color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .edit-icon:hover {
+            color: #4e9af1;
+        }
+
+        .delete-icon:hover {
+            color: #E50914;
+        }
+
+        @media (max-width: 768px) {
+            .movie-poster {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 fade-in">
+        <div class="row">
+            <div class="col-md-4">
+                {% if movie.poster %}
+                    <img src="{{ movie.poster.url }}" class="img-fluid movie-poster" alt="{{ movie.Movie_name }}">
+                {% else %}
+                    <img src="{% static 'images/default-poster.jpg' %}" class="img-fluid movie-poster" alt="No poster">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h1>{{ movie.Movie_name }}</h1>
+                <p><strong>Director:</strong> {{ movie.Directer }}</p>
+                <p><strong>Release Date:</strong> {{ movie.Release_date }}</p>
+                <p>{{ movie.description }}</p>
+                <div class="button-group">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'add_review' movie.pk %}" class="btn btn-success btn-animated">Add Review</a>
+                    {% endif %}
+                    <a href="{% url 'movie_list' %}" class="btn btn-primary btn-animated">Back to Movie List</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="review-section slide-up">
+            <h3>Reviews</h3>
+            {% for review in reviews %}
+            <div class="card mb-3 review-card">
+                <div class="card-body">
+                    {% if user.is_authenticated and user.username == review.username %}
+                    <div class="review-actions">
+                        <a href="{% url 'reviewupdate' pk=review.id %}" class="action-icon edit-icon" title="Edit review">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'reviewdelete' pk=review.id %}" class="action-icon delete-icon" title="Delete review">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                    <h5 class="card-title">{{ review.username }} - {{ review.rating }}/5</h5>
+                    <p class="card-text">{{ review.comment }}</p>
+                    <p class="card-text"><small class="text-muted">{{ review.created_at }}</small></p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No reviews yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

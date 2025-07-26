@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Review </title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@300,400,500,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --netflix-dark: #141414;
+            --netflix-light: #f3f3f3;
+            --netflix-gray: #808080;
+            --netflix-dark-gray: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--netflix-dark);
+            color: var(--netflix-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .review-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .review-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .review-header h1 {
+            color: var(--netflix-light);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .review-header p {
+            color: var(--netflix-gray);
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--netflix-light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--netflix-gray);
+            border-radius: 4px;
+            color: var(--netflix-light);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--netflix-light);
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .rating-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .rating-label {
+            margin-right: 15px;
+            color: var(--netflix-light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .rating-stars {
+            display: flex;
+        }
+
+        .rating-star {
+            color: var(--netflix-gray);
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .rating-star:hover,
+        .rating-star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--netflix-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #f6121d;
+        }
+
+        .errorlist {
+            list-style: none;
+            color: var(--netflix-red);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .review-container {
+                padding: 30px 20px;
+            }
+            
+            .review-header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="review-container">
+        <div class="review-header">
+            <h1>Add Your Review</h1>
+            <p>Share your thoughts about this title</p>
+        </div>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            
+            <!-- Rating Field -->
+            <div class="form-group">
+                <label for="id_rating">Rating</label>
+                <div class="rating-container">
+                    <span class="rating-label">Your rating:</span>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                            <i class="fas fa-star rating-star {% if form.rating.value == forloop.counter %}active{% endif %}" 
+                               data-value="{{ forloop.counter }}"></i>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="id_rating" value="{{ form.rating.value|default:'' }}">
+                </div>
+                {% if form.rating.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.rating.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <!-- Comment Field -->
+            <div class="form-group">
+                <label for="id_comment">Review</label>
+                <textarea class="form-control" id="id_comment" name="comment" rows="5" 
+                          placeholder="Write your detailed review here...">{{ form.comment.value|default:'' }}</textarea>
+                {% if form.comment.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.comment.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <!-- Other form fields will be rendered automatically -->
+            {% for field in form %}
+                {% if field.name != 'rating' and field.name != 'comment' %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Review
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Star rating functionality
+            const stars = document.querySelectorAll('.rating-star');
+            const ratingInput = document.getElementById('id_rating');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    ratingInput.value = value;
+                    
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < value) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                // Hover effect
+                star.addEventListener('mouseover', function() {
+                    const value = this.getAttribute('data-value');
+                    stars.forEach((s, index) => {
+                        if (index < value) {
+                            s.style.color = '#ffc107';
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    const currentRating = ratingInput.value;
+                    stars.forEach((s, index) => {
+                        if (!currentRating || index >= currentRating) {
+                            s.style.color = '';
+                        } else {
+                            s.style.color = '#ffc107';
+                        }
+                    });
+                });
+            });
+            
+            // Initialize stars if there's already a value
+            if (ratingInput.value) {
+                stars.forEach((star, index) => {
+                    if (index < ratingInput.value) {
+                        star.classList.add('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

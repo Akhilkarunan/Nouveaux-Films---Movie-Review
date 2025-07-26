@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Nouveaux Films</title>
+    <style>
+        /* CSS Styles for Netflix Theme */
+        body {
+            background-color: #0d0c0c; /* Dark Netflix background */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .register-card {
+            background: #141414; /* Slightly lighter dark shade */
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .text-primary {
+            color: #fff; /* White for Netflix theme */
+            margin-bottom: 1rem;
+        }
+
+        .text-info {
+            color: #E50914; /* Netflix red */
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #fff; /* White labels */
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #333; /* Dark border */
+            border-radius: 8px;
+            background: #333; /* Dark input background */
+            color: #fff; /* White text */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #E50914; /* Netflix red */
+            box-shadow: 0 0 5px rgba(229, 9, 20, 0.5); /* Red glow */
+        }
+
+        .btn-custom {
+            background: #E50914; /* Netflix red */
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-custom:hover {
+            background: #b20710; /* Darker red on hover */
+            transform: translateY(-2px);
+        }
+
+        .toggle-password {
+            float: right;
+            cursor: pointer;
+            color: #E50914; /* Netflix red */
+            margin-top: -25px;
+            margin-right: 10px;
+        }
+
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #E50914; /* Netflix red */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #b20710; /* Darker red on hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <h1 class="text-center text-primary mt-3">Nouveaux Films</h1>
+        <h2 class="text-center text-info">Register</h2>
+        
+        <form method="post" id="registerForm">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {% if 'password' in field.name %}
+                        <div style="position: relative;">
+                            {{ field }}
+                            <span class="toggle-password" onclick="togglePassword(this)">Show</span>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-custom w-100">Register</button>
+            <a href="{% url 'login' %}" class="login-link">Already have an account? Login</a>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript for additional features
+        function togglePassword(element) {
+            const passwordField = element.previousElementSibling;
+            const toggleText = element;
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleText.textContent = 'Hide';
+            } else {
+                passwordField.type = 'password';
+                toggleText.textContent = 'Show';
+            }
+        }
+
+        // Form validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const inputs = document.querySelectorAll('.form-control');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                } else {
+                    input.style.borderColor = '#333';
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields');
+            }
+        });
+
+        // Add form-control class to inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.classList.add('form-control');
+        });
+    </script>
+</body>
+</html>

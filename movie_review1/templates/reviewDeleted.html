@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Deletion | Nouveaux Films</title>
+    <style>
+        body {
+            background-color: #0d0c0c; /* Dark Netflix background */
+            color: #fff; /* White text */
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .confirmation-card {
+            background: #141414; /* Slightly lighter dark shade */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        h2 {
+            color: #fff; /* White title */
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #ccc; /* Light gray for readability */
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-confirm {
+            background-color: #E50914; /* Netflix red */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-confirm:hover {
+            background-color: #b20710; /* Darker red on hover */
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background-color: #333; /* Dark gray for cancel */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-cancel:hover {
+            background-color: #555; /* Lighter gray on hover */
+            transform: translateY(-2px);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-card">
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete ?</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }} <!-- Render form fields, if any -->
+            <input type="submit" value="Confirm" class="btn-confirm">
+            <a href="{% url 'movie_list' %}" class="btn-cancel">Cancel</a> <!-- Adjust URL as needed -->
+        </form>
+    </div>
+</body>
+</html>
